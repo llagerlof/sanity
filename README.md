@@ -134,12 +134,21 @@ plugin on the machine goes in. On Debian and Ubuntu they come from
 `gstreamer1.0-plugins-base gstreamer1.0-plugins-good gstreamer1.0-plugins-bad`,
 on Arch from `gst-plugins-base gst-plugins-good gst-plugins-bad`. On Arch,
 `NO_STRIP=true` as well, since the `strip` inside linuxdeploy cannot
-read Arch's libraries:
+read Arch's libraries. Without it the build ends in nothing more than
+`failed to run linuxdeploy`; `--verbose` shows the real error.
+
+linuxdeploy's GStreamer step also needs `patchelf` on the `PATH`, and fails
+the same way without it — `--verbose` shows `Error: patchelf not found` from
+the gstreamer plugin. It is in the package lists above, but easy to miss if
+WebKitGTK was already installed: `sudo pacman -S patchelf` on Arch,
+`sudo apt install patchelf` on Debian and Ubuntu.
 
 ```sh
-env $(scripts/appimage-gstreamer.sh target/gstreamer) \
-  NO_STRIP=true npx tauri build --bundles appimage
+env $(bash scripts/appimage-gstreamer.sh target/gstreamer) NO_STRIP=true npx tauri build --bundles appimage
 ```
+
+The script goes through `bash` because it is not marked executable; run
+directly, it fails, the `env` comes out empty and every plugin goes in anyway.
 
 The web demo is the same app reading pre-built dumps of public repositories
 over HTTP:

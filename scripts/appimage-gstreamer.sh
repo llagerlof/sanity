@@ -16,7 +16,7 @@
 # x264 is GPL and H.264 is patent encumbered, which an MIT licensed download
 # should not take on without someone deciding to.
 #
-#   env $(scripts/appimage-gstreamer.sh target/gstreamer) \
+#   env $(bash scripts/appimage-gstreamer.sh target/gstreamer) \
 #     NO_STRIP=true npx tauri build --bundles appimage
 #
 # Prints the two variables the plugin reads as NAME=value lines, which is what

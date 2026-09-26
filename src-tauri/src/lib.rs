@@ -1005,12 +1005,22 @@ fn startup() -> Startup {
     // fall back to `SANITY_OPEN` and passed over any real folder behind it.
     // A launcher that hands over a field code it did not expand is enough to
     // hit that: `sanity %F /repo` opened nothing.
+    //
+    // Relative paths are taken against `OWD` when it is set: the AppImage's
+    // AppRun changes into its own mount before starting us, so `sanity .`
+    // would otherwise open a folder inside the AppImage.
+    let base = std::env::var_os("OWD").map(PathBuf::from);
+    let resolve = |a: String| match &base {
+        Some(owd) => owd.join(a),
+        None => PathBuf::from(a),
+    };
     let from_arg = std::env::args()
         .skip(1)
-        .find(|a| !a.starts_with('-') && Path::new(a).is_dir());
+        .filter(|a| !a.starts_with('-'))
+        .map(resolve)
+        .find(|p| p.is_dir());
     let repo = from_arg
-        .or_else(|| std::env::var("SANITY_OPEN").ok())
-        .map(PathBuf::from)
+        .or_else(|| std::env::var("SANITY_OPEN").ok().map(resolve))
         // Still needed: `SANITY_OPEN` has not been tested by the search.
         .filter(|p| p.is_dir())
         .map(|p| p.canonicalize().unwrap_or(p).to_string_lossy().into_owned());
