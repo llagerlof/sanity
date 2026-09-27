@@ -95,7 +95,7 @@ returning to the present shows the folder as it is.
 
 ## What it shows
 
-- Source files with syntax highlighting for 16 languages (tree-sitter), plus
+- Source files with syntax highlighting for 21 languages (tree-sitter), plus
   Verilog-A and SPICE.
 - Jupyter notebooks as their cells rather than as JSON.
 - Images, SVGs and PDFs as panels in their own proportions. A PDF shows its
